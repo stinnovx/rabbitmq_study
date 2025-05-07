@@ -2,9 +2,11 @@
 
 namespace App\Console\Commands;
 
+use App\Mail\TestMail;
 use App\Services\RabbitmqConsumerService;
 use Illuminate\Console\Command;
 use Illuminate\Support\Facades\Log;
+use Illuminate\Support\Facades\Mail;
 
 class ConsumeOrder extends Command
 {
@@ -30,7 +32,9 @@ class ConsumeOrder extends Command
         $this->rabbitmqConsumer = new RabbitmqConsumerService();
 
         $this->rabbitmqConsumer->consume('order_queue', 'order_exchange', 'order.create', function ($msg){
-            Log::info('Consumed order: '.$msg->body);
+            $user = json_decode($msg->body);
+            Log::info('Mail sent to: '. json_encode($user));
+            Mail::to($user->email)->send(new TestMail($user));
         });
     }
 }

@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers;
 
+use App\Models\User;
 use App\Services\RabbitmqProducerService;
 
 class RabbitmqProducerController extends Controller
@@ -14,10 +15,16 @@ class RabbitmqProducerController extends Controller
     }
 
     public function publish(){
-        $orderData = [
-            'name' => 'Headphone',
-            'amount' => '10'
+
+        $user = [
+            'name' => 'Salauddin Shanto',
+            'email' => 'salauddin.innovx@gmail.com',
         ];
-        $this->rabbitmqProducerService->publish($orderData, 'order_exchange' , 'order.create');
+
+        // $orderData = [
+        //     'name' => 'Headphone',
+        //     'amount' => '10'
+        // ];
+        $this->rabbitmqProducerService->publish($user, 'order_exchange' , 'order.create');
     }
 }

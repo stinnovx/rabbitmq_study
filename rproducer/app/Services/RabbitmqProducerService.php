@@ -25,7 +25,7 @@ class RabbitmqProducerService
         $msg = new AMQPMessage(json_encode($data), ['content_type' => 'application/json']);
         $this->channel->exchange_declare($exchange, 'topic', false, true, false);
         $this->channel->basic_publish($msg, $exchange, $routingKey);
-        echo "order created successfully";
+        echo "User data is sent to rabbitmq";
     }
 
     public function __destruct()

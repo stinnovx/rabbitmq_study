@@ -18,7 +18,16 @@ class RabbitmqConsumerService
             config('rabbitmq.port'),
             config('rabbitmq.user'),
             config('rabbitmq.password'),
-            config('rabbitmq.vhost')
+            config('rabbitmq.vhost'),
+            false,      // insist
+            'AMQPLAIN', // login_method
+            null,       // login_response
+            'en_US',    // locale
+            3.0,        // connection_timeout
+            20.0,        // read_write_timeout
+            null,       // context
+            false,      // keepalive
+            10          // heartbeat (in seconds)
         );
         $this->channel = $this->connection->channel();
     }
@@ -30,12 +39,10 @@ class RabbitmqConsumerService
         $this->channel->queue_bind($queue, $exchange, $routingKey);
 
         $this->channel->basic_consume($queue, '', false, true, false, false, $callback);
-        Log::info('this is consumer');
         while($this->channel->callbacks){
 
             try{
-                $this->channel->wait(null, false, 10);
-                Log::info('after wait');
+                $this->channel->wait();
             }
             catch(\PhpAmqpLib\Exception\AMQPTimeoutException $e){
                 Log::info('No message receiving. Continue...');
